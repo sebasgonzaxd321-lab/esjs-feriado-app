@@ -1,22 +1,48 @@
-importar { Terminal } desde '@es-js/terminal'
+importar { Terminal } desde "@es-js/terminal"
+importar { obtenerJson } desde "https://desarrollo-aplicaciones.vercel.app/2024/code/obtener-json.js"
+importar { validarSecreto } desde "https://desarrollo-aplicaciones.vercel.app/2024/code/validar-secreto.js"
+importar { calcularProximoFeriado } desde "https://desarrollo-aplicaciones.vercel.app/2024/code/calcular-proximo-feriado.js"
 
 asincrono funcion inicio() {
-	Terminal.limpiar()
+  Terminal.escribir("Hola! Ingresa la palabra secreta:")
 
-	Terminal.escribir('Ingresa un valor:')
+  var secreto = esperar Terminal.leer()
 
-	const resultado = esperar Terminal.leer()
+  var dni = "48339220"
 
-	Terminal.escribir({
-		Resultado: resultado,
-		Tipo: tipoDe resultado,
-	})
+  si (esperar validarSecreto(dni, secreto)) {
+    esperar mostrarProximoFeriado()
+  } sino {
+    Terminal.escribir("Palabra secreta inválida")
+  }
 
-	Terminal.escribir('Presiona ENTER para volver a iniciar')
+  Terminal.escribir("Presiona ENTER para volver a ingresar")
 
-	esperar Terminal.leerEnter()
+  esperar Terminal.leerEnter()
 
-	esperar inicio()
+  Terminal.limpiar()
+
+  inicio()
+}
+
+asincrono funcion mostrarProximoFeriado() {
+  Terminal.escribir("Obteniendo informacion de lso feriados")
+
+  intentar{
+  const urlFeriados = "https://api.argentinadatos.com/v1/feriados"
+  const feriados = esperar obtenerJson(urlFeriados)
+
+  const proximoFeriado = calcularProximoFeriado(feriados)
+
+  Terminal.escribir("============================================")
+  Terminal.escribir(" El próximo feriado es:")
+  Terminal.escribir(" Nombre: " + proximoFeriado.nombre)
+  Terminal.escribir(proximoFeriado.motivo + " (" +proximoFeriado.fecha + ")")
+  Terminal.escribir("===========================================")
+
+} capturar (error) {
+     Terminal.escribir("Error al conectar con el servicio de feriados:"+ error)
+}
 }
 
 inicio()
